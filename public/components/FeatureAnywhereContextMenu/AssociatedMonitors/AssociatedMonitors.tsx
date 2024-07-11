@@ -5,7 +5,7 @@
 
 import React, { useCallback, useState } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiEmptyPrompt,
   EuiFlexGroup,
   EuiFlexItem,
@@ -126,9 +126,9 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton iconType="link" isDisabled={!isAssociateAllowed} fill onClick={() => setFlyoutMode('existing')}>
+            <EuiSmallButton iconType="link" isDisabled={!isAssociateAllowed} fill onClick={() => setFlyoutMode('existing')}>
               Associate a monitor
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer size="l" />
