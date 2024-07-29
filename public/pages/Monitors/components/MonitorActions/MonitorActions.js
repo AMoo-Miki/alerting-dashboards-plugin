@@ -13,8 +13,7 @@ import {
   EuiPopover,
 } from '@elastic/eui';
 
-import { APP_PATH } from '../../../../utils/constants';
-import { PLUGIN_NAME } from '../../../../../utils/constants';
+import NewMonitorAction from './new_monitor_action';
 
 export default class MonitorActions extends Component {
   state = {
@@ -115,15 +114,7 @@ export default class MonitorActions extends Component {
             Edit
           </EuiSmallButton>
         </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiSmallButton
-            fill
-            href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}
-            data-test-subj="createButton"
-          >
-            Create monitor
-          </EuiSmallButton>
-        </EuiFlexItem>
+        <NewMonitorAction />
       </EuiFlexGroup>
     );
   }

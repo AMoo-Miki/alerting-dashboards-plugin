@@ -20,11 +20,25 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin } from './services';
+import {
+  setClient,
+  setEmbeddable,
+  setNotifications,
+  setOverlays,
+  setSavedAugmentVisLoader,
+  setUISettings,
+  setQueryService,
+  setSavedObjectsClient,
+  setDataSourceEnabled,
+  setDataSourceManagementPlugin,
+  setNavigationUI,
+  setApplication,
+} from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
+import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -47,6 +61,7 @@ export interface AlertingStartDeps {
   visAugmenter: VisAugmenterStart;
   embeddable: EmbeddableStart;
   data: DataPublicPluginStart;
+  navigation: NavigationPublicPluginStart;
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
@@ -167,13 +182,15 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation }: AlertingStartDeps): AlertingStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);
     setSavedObjectsClient(core.savedObjects.client);
+    setNavigationUI(navigation.ui);
+    setApplication(core.application);
     return {};
   }
 }

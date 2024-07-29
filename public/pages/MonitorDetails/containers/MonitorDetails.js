@@ -50,7 +50,8 @@ import { DeleteMonitorModal } from '../../../components/DeleteModal/DeleteMonito
 import { getLocalClusterName } from '../../CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
 import { getDataSourceQueryObj } from '../../utils/helpers';
 import { MultiDataSourceContext } from '../../../../public/utils/MultiDataSourceContext';
-import { setDataSource } from '../../../services';
+import { getApplication, getNavigationUI, getUISettings, setDataSource } from '../../../services';
+import { MonitorDetailsHeader } from '../components/MonitorDetailsHeader';
 
 export default class MonitorDetails extends Component {
   static contextType = MultiDataSourceContext;
@@ -294,30 +295,52 @@ export default class MonitorDetails extends Component {
 
   renderNoTriggersCallOut = () => {
     const { monitor, editMonitor } = this.state;
-    if (!monitor.triggers.length) {
-      return (
-        <Fragment>
-          <EuiCallOut
-            title={
-              <span>
-                This monitor has no triggers configured. To receive alerts from this monitor you
-                must first create a trigger.{' '}
-                {
-                  <EuiLink style={{ textDecoration: 'underline' }} onClick={editMonitor}>
-                    Edit monitor
-                  </EuiLink>
-                }
-              </span>
+    if (monitor.triggers.length) return null;
+
+    const uiSettings = getUISettings();
+    const showActionsInHeader = uiSettings.get('home:useNewHomePage');
+
+    const callOut = (
+      <EuiCallOut
+        title={
+          <span>
+            This monitor has no triggers configured. To receive alerts from this monitor you must
+            first create a trigger.{' '}
+            {
+              <EuiLink
+                style={{ textDecoration: 'underline' }}
+                onClick={editMonitor}
+                color={showActionsInHeader ? 'warning' : 'primary'}
+              >
+                Edit monitor
+              </EuiLink>
             }
-            iconType="alert"
-            size="s"
-          />
-          <EuiSpacer size="s" />
-        </Fragment>
+          </span>
+        }
+        iconType="alert"
+        size="s"
+        color={showActionsInHeader ? 'warning' : 'primary'}
+      />
+    );
+
+    if (showActionsInHeader) {
+      const { HeaderControl } = getNavigationUI();
+      const { setAppBottomControls } = getApplication();
+
+      return (
+        <HeaderControl
+          setMountPoint={setAppBottomControls}
+          controls={[{ renderComponent: callOut }]}
+        />
       );
     }
 
-    return null;
+    return (
+      <Fragment>
+        {callOut}
+        <EuiSpacer size="s" />
+      </Fragment>
+    );
   };
 
   showJsonModal = () => {
@@ -479,43 +502,22 @@ export default class MonitorDetails extends Component {
     const displayTableTabs = [MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(
       monitor.monitor_type
     );
+
+    const uiSettings = getUISettings();
+    const showActionsInHeader = uiSettings.get('home:useNewHomePage');
+
     return (
-      <div style={{ padding: '25px 50px' }}>
+      <div style={{ padding: showActionsInHeader ? '1px 16px' : '25px 50px' }}>
         {this.renderNoTriggersCallOut()}
-        <EuiFlexGroup alignItems="flexEnd">
-          <EuiFlexItem grow={false}>
-            <EuiText size="s" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
-              <h1>{monitor.name}</h1>
-            </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem style={{ paddingBottom: '5px', marginLeft: '0px' }}>
-            {monitor.enabled ? (
-              <EuiHealth color="success">Enabled</EuiHealth>
-            ) : (
-              <EuiHealth color="subdued">Disabled</EuiHealth>
-            )}
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiSmallButton onClick={editMonitor}>Edit</EuiSmallButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiSmallButton
-              isLoading={updating}
-              onClick={() => this.updateMonitor({ enabled: !monitor.enabled })}
-            >
-              {monitor.enabled ? 'Disable' : 'Enable'}
-            </EuiSmallButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiSmallButton onClick={this.showJsonModal}>Export as JSON</EuiSmallButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiSmallButton onClick={this.onDeleteClick} color="danger">
-              Delete
-            </EuiSmallButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiSpacer />
+
+        <MonitorDetailsHeader
+          monitor={monitor}
+          editMonitor={editMonitor}
+          updating={updating}
+          updateMonitor={this.updateMonitor}
+          showJsonModal={this.showJsonModal}
+          onDeleteClick={this.onDeleteClick}
+        />
         <MonitorOverview
           monitor={monitor}
           monitorId={monitorId}

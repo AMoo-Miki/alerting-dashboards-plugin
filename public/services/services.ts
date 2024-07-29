@@ -11,6 +11,7 @@ import { CoreStart, IUiSettingsClient, NotificationsStart, OverlayStart } from '
 import { SavedObjectLoaderAugmentVis } from '../../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../../src/plugins/data/public';
 import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
+import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
 
@@ -28,6 +29,10 @@ export const [getSavedAugmentVisLoader, setSavedAugmentVisLoader] = createGetter
 export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClient>('UISettings');
 
 export const [getEmbeddable, setEmbeddable] = createGetterSetter<EmbeddableStart>('embeddable');
+
+export const [getNavigationUI, setNavigationUI] = createGetterSetter<NavigationPublicPluginStart['ui']>('navigation');
+
+export const [getApplication, setApplication] = createGetterSetter<CoreStart['application']>('application');
 
 export const [getOverlays, setOverlays] =
   createGetterSetter<OverlayStart>('Overlays');
