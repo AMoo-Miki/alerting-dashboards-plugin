@@ -18,7 +18,11 @@ const Daily = ({ compressed }) => {
             field: { value, onChange, onBlur, className, ...rest },
             form: { touched, errors, setFieldValue },
           }) => (
-            <EuiFormRow label="Around" style={{ marginTop: '0px' }} compressed={compressed}>
+            <EuiFormRow
+              label="Around"
+              style={{ marginTop: '0px' }}
+              display={compressed ? 'rowCompressed' : 'row'}
+            >
               <EuiDatePicker
                 showTimeSelect
                 showTimeSelectOnly
